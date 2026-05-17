@@ -49,7 +49,7 @@ const WhyChooseUs = () => {
           We bring top-tier healthcare logistics closer to you, eliminating long waiting lines.
         </p>
 
-        {/* Features Grid */}
+     
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((item) => (
             <div 
@@ -58,7 +58,7 @@ const WhyChooseUs = () => {
               onMouseEnter={(e) => e.currentTarget.style.borderColor = accentColor}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(241, 245, 249, 0.5)'}
             >
-              {/* Icon Container with Accent Glow */}
+             
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-white mb-6 transition-transform duration-300 group-hover:scale-110"
                 style={{ 
