@@ -9,7 +9,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname(); // কারেন্ট পাথ ট্র্যাকিং
+  const pathname = usePathname(); 
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -23,7 +23,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-          {/* Logo Section */}
+      
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <Image
               src="/logo.png"
@@ -38,7 +38,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -58,7 +57,7 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Desktop Actions (ডেস্কটপে আগের মতোই সাধারণ টেক্সট লিংক রাখা হয়েছে) */}
+         
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Link href="/login" className="text-sm font-bold text-slate-900 hover:text-[#2ED8E3] transition-colors px-4 py-2">
@@ -74,7 +73,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Mobile Hamburger Menu Icon */}
+       
           <div className="flex md:hidden items-center">
             <button 
               onClick={() => setIsOpen(true)} 
@@ -87,7 +86,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Backdrop Overlay */}
+   
       <div
         className={`fixed inset-0 bg-slate-900/30 z-50 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -95,14 +94,14 @@ export default function Navbar() {
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Mobile Menu Drawer */}
+    
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
       
-        {/* Drawer Header */}
+    
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2.5 shrink-0">
             <Image
@@ -124,7 +123,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Drawer Links */}
+        
         <div className="p-5 flex-1 space-y-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -145,10 +144,10 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Mobile Action Buttons Footer (এখানে আপনার শর্ত অনুযায়ী পরিবর্তন করা হয়েছে) */}
+        
         <div className="p-5 border-t border-slate-100 bg-white">
           <div className="flex flex-col gap-3">
-            {/* Mobile Login Button: শুধুমাত্র মোবাইলের জন্য আউটলাইন/বর্ডারড স্টাইল */}
+           
             <Button 
               as={Link} 
               href="/login" 
@@ -159,7 +158,7 @@ export default function Navbar() {
               Login
             </Button>
             
-            {/* Register Button */}
+           
             <Button 
               as={Link} 
               href="/register" 
