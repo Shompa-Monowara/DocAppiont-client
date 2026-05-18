@@ -3,11 +3,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Button } from "@heroui/react";
 import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname(); // কারেন্ট পাথ ট্র্যাকিং
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "All Appointments", href: "/all-appointments" },
+    { name: "Dashboard", href: "/dashboard" },
+  ];
 
   return (
     <nav className="w-full bg-white border-b border-slate-100 sticky top-0 z-50">
@@ -15,41 +23,52 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-          {/* Logo Section (Desktop) */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <Image
               src="/logo.png"
               alt="DocAppoint Logo"
-              width={36}      
-              height={36}      
+              width={34}      
+              height={34}      
               className="object-contain rounded-xl"
               priority         
             />
-            <span className="font-heading font-extrabold text-xl text-medicalDark tracking-tight">
-              Doc<span className="text-medicalDark/80 font-semibold">Appoint</span>
+            <span className="font-heading font-extrabold text-xl text-[#023154] tracking-tight">
+              Doc<span className="text-[#2ED8E3] font-extrabold">Appoint</span>
             </span>
           </Link>
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1">
-            <Link href="/" className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-              Home
-            </Link>
-            <Link href="/all-appointments" className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-              All Appointments
-            </Link>
-            <Link href="/dashboard" className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-              Dashboard
-            </Link>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                    isActive
+                      ? "text-[#023154] bg-[#023154]/5" 
+                      : "text-slate-900 hover:text-[#2ED8E3] hover:bg-slate-50" 
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Desktop Actions */}
+          {/* Desktop Actions (ডেস্কটপে আগের মতোই সাধারণ টেক্সট লিংক রাখা হয়েছে) */}
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Link href="/login" className="text-sm font-semibold text-medicalDark hover:text-slate-600 transition-colors px-4 py-2">
+              <Link href="/login" className="text-sm font-bold text-slate-900 hover:text-[#2ED8E3] transition-colors px-4 py-2">
                 Login
               </Link>
-              <Button as={Link} href="/register" className="bg-medicalAccent text-medicalDark font-bold text-sm px-5 rounded-xl shadow-md shadow-medicalAccent/10 min-w-max h-10">
+              <Button 
+                as={Link} 
+                href="/register" 
+                className="bg-[#2ED8E3] text-[#023154] font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#2ED8E3]/20 min-w-max h-10 hover:opacity-90"
+              >
                 Register
               </Button>
             </div>
@@ -57,7 +76,10 @@ export default function Navbar() {
 
           {/* Mobile Hamburger Menu Icon */}
           <div className="flex md:hidden items-center">
-            <button onClick={() => setIsOpen(true)} className="text-slate-600 hover:text-medicalDark p-2 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center">
+            <button 
+              onClick={() => setIsOpen(true)} 
+              className="text-[#023154] p-2 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center"
+            >
               <FiMenu className="w-6 h-6" />
             </button>
           </div>
@@ -65,7 +87,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Backdrop Overlay (এখান থেকে ব্লার সরিয়ে শুধু হালকা ডার্ক করা হয়েছে) */}
+      {/* Mobile Backdrop Overlay */}
       <div
         className={`fixed inset-0 bg-slate-900/30 z-50 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -82,52 +104,67 @@ export default function Navbar() {
       
         {/* Drawer Header */}
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-          <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2 shrink-0">
+          <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2.5 shrink-0">
             <Image
               src="/logo.png"
               alt="DocAppoint Logo"
-              width={30}      
-              height={30}      
+              width={28}      
+              height={28}      
               className="object-contain rounded-lg"
             />
-            <span className="font-heading font-extrabold text-lg text-medicalDark tracking-tight">
-              Doc<span className="text-medicalDark/80 font-semibold">Appoint</span>
+            <span className="font-heading font-extrabold text-lg text-[#023154] tracking-tight">
+              Doc<span className="text-[#2ED8E3] font-extrabold">Appoint</span>
             </span>
           </Link>
-          <button onClick={() => setIsOpen(false)} className="p-2 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-medicalDark transition-colors flex items-center justify-center">
+          <button 
+            onClick={() => setIsOpen(false)} 
+            className="p-2 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-[#023154] transition-colors flex items-center justify-center"
+          >
             <FiX className="w-5 h-5" />
           </button>
         </div>
 
         {/* Drawer Links */}
         <div className="p-5 flex-1 space-y-2">
-          <Link href="/" onClick={() => setIsOpen(false)} className="block px-4 py-3 rounded-xl text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-            Home
-          </Link>
-          <Link href="/all-appointments" onClick={() => setIsOpen(false)} className="block px-4 py-3 rounded-xl text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-            All Appointments
-          </Link>
-          <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-3 rounded-xl text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-medicalDark transition-colors">
-            Dashboard
-          </Link>
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`block px-4 py-3 rounded-xl text-base font-bold transition-all duration-200 ${
+                  isActive
+                    ? "text-[#023154] bg-[#023154]/5 border-l-4 border-[#023154]" 
+                    : "text-slate-900 hover:bg-slate-50 hover:text-[#2ED8E3]" 
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Mobile Action Buttons Footer */}
-        <div className="p-5 border-t border-slate-100 bg-slate-50/50">
+        {/* Mobile Action Buttons Footer (এখানে আপনার শর্ত অনুযায়ী পরিবর্তন করা হয়েছে) */}
+        <div className="p-5 border-t border-slate-100 bg-white">
           <div className="flex flex-col gap-3">
+            {/* Mobile Login Button: শুধুমাত্র মোবাইলের জন্য আউটলাইন/বর্ডারড স্টাইল */}
             <Button 
               as={Link} 
               href="/login" 
+              variant="bordered"
               onClick={() => setIsOpen(false)} 
-              className="w-full text-slate-700 font-bold border border-slate-300 bg-white hover:bg-slate-100 text-sm h-11 rounded-xl transition-all"
+              className="w-full text-[#023154] font-bold border-1.5 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-sm h-11 rounded-xl transition-all"
             >
               Login
             </Button>
+            
+            {/* Register Button */}
             <Button 
               as={Link} 
               href="/register" 
               onClick={() => setIsOpen(false)} 
-              className="w-full bg-medicalAccent text-medicalDark font-bold text-sm h-11 rounded-xl shadow-md shadow-medicalAccent/5 transition-all"
+              className="w-full bg-[#2ED8E3] text-[#023154] font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#2ED8E3]/10 transition-all hover:opacity-90"
             >
               Register
             </Button>
