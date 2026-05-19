@@ -44,8 +44,7 @@ const FaqSection = () => {
   return (
     <section className="py-20 bg-slate-50/60 border-t border-b border-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        
-        {/* Section Header */}
+      
         <div className="text-center mb-12">
           <span 
             className="text-xs font-bold tracking-widest uppercase px-3 py-1 bg-white rounded-full border border-slate-100"
