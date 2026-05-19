@@ -21,7 +21,7 @@ const DoctorSearch = () => {
     };
 
     return (
-        <div className="w-full max-w-3xl mx-auto mt-6 px-1">
+        <div className="w-full max-w-3xl mx-auto  px-1">
            
             <div 
                 className={`w-full flex items-center h-12 bg-white border rounded-2xl px-4 transition-all duration-200 shadow-sm ${
