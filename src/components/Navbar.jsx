@@ -1,15 +1,24 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Button } from "@heroui/react";
+import { Button, Avatar } from "@heroui/react"; 
 import { FiMenu, FiX } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); 
+
+
+  const { data: session } = authClient.useSession(); 
+  const user = session?.user;
+
+  
+  const handleSignOut = async () => {
+    await authClient.signOut();
+  };
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -19,11 +28,10 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white border-b border-slate-100 sticky top-0 z-50">
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-      
+          {/* Logo Section */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <Image
               src="/logo.png"
@@ -38,6 +46,7 @@ export default function Navbar() {
             </span>
           </Link>
 
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -57,23 +66,47 @@ export default function Navbar() {
             })}
           </div>
 
-         
-          <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Link href="/login" className="text-sm font-bold text-slate-900 hover:text-[#2ED8E3] transition-colors px-4 py-2">
-                Login
-              </Link>
-              <Button 
-                as={Link} 
-                href="/register" 
-                className="bg-[#2ED8E3] text-[#023154] font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#2ED8E3]/20 min-w-max h-10 hover:opacity-90"
-              >
-                Register
-              </Button>
-            </div>
-          </div>
+          {/* Desktop Authentication Section */}
+          <ul className="hidden md:flex items-center gap-4">
+          
+            {user ? (
+              <>
+                <li>
+                  <Avatar>
+        <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image}  />
+        <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
+      </Avatar>
+                </li>
+                <li>
+                  <Button 
+                    onClick={handleSignOut}
+                    className="bg-red-500 text-white font-bold text-sm px-4 rounded-xl h-10 hover:bg-red-600 transition-colors"
+                  >
+                    Logout
+                  </Button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link href="/login" className="text-sm font-bold text-slate-900 hover:text-[#2ED8E3] transition-colors px-4 py-2">
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/register">
+                    <Button 
+                      className="bg-[#2ED8E3] text-[#023154] font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#2ED8E3]/20 min-w-max h-10 hover:opacity-90"
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
 
-       
+      
           <div className="flex md:hidden items-center">
             <button 
               onClick={() => setIsOpen(true)} 
@@ -86,7 +119,7 @@ export default function Navbar() {
         </div>
       </div>
 
-   
+    
       <div
         className={`fixed inset-0 bg-slate-900/30 z-50 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -100,8 +133,7 @@ export default function Navbar() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-      
-    
+        {/* Mobile Menu Header */}
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2.5 shrink-0">
             <Image
@@ -123,7 +155,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        
+        {/* Mobile Navigation Links */}
         <div className="p-5 flex-1 space-y-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -144,30 +176,54 @@ export default function Navbar() {
           })}
         </div>
 
-        
+        {/* Mobile Authentication Section */}
         <div className="p-5 border-t border-slate-100 bg-white">
-          <div className="flex flex-col gap-3">
-           
-            <Button 
-              as={Link} 
-              href="/login" 
-              variant="bordered"
-              onClick={() => setIsOpen(false)} 
-              className="w-full text-[#023154] font-bold border-1.5 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-sm h-11 rounded-xl transition-all"
-            >
-              Login
-            </Button>
-            
-           
-            <Button 
-              as={Link} 
-              href="/register" 
-              onClick={() => setIsOpen(false)} 
-              className="w-full bg-[#2ED8E3] text-[#023154] font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#2ED8E3]/10 transition-all hover:opacity-90"
-            >
-              Register
-            </Button>
-          </div>
+          <ul className="flex flex-col gap-3 w-full">
+            {user ? (
+              <>
+                <li className="flex items-center gap-3 w-full px-2 py-1">
+               <Avatar>
+        <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image}  />
+        <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
+      </Avatar>
+                  <span className="text-sm font-bold text-slate-900 truncate">{user?.name || "User"}</span>
+                </li>
+                <li className="w-full">
+                  <Button 
+                    onClick={() => {
+                      handleSignOut();
+                      setIsOpen(false);
+                    }}
+                    className="w-full bg-red-500 text-white font-bold text-sm h-11 rounded-xl hover:bg-red-600 transition-all"
+                  >
+                    Logout
+                  </Button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="w-full">
+                  <Link href="/login" onClick={() => setIsOpen(false)} className="w-full">
+                    <Button 
+                      variant="bordered"
+                      className="w-full text-[#023154] font-bold border-1.5 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-sm h-11 rounded-xl transition-all"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                </li>
+                <li className="w-full">
+                  <Link href="/register" onClick={() => setIsOpen(false)} className="w-full">
+                    <Button 
+                      className="w-full bg-[#2ED8E3] text-[#023154] font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#2ED8E3]/10 transition-all hover:opacity-90"
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
 
       </div>

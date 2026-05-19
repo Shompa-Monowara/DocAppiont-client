@@ -1,12 +1,19 @@
 import { fetchSingleDoctor } from "@/lib/doctors/data";
 import { Button } from "@heroui/react";
-import { FiChevronLeft, FiMapPin, FiClock } from "react-icons/fi";
+import { FiChevronLeft, FiMapPin, FiClock, FiDollarSign } from "react-icons/fi";
+import { MdLocalHospital } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
-import Image from "next/image";
+import BookAppointmentButton from "@/components/BookAppointmentButton"; // ইমপোর্ট করা হলো
 
-const DoctorDetailsPage = async ({ params }) => {
-    const { doctorId } = await params;
+const DoctorDetailsPage = async (props) => {
+    const resolvedParams = await props.params; 
+    const doctorId = resolvedParams?.doctorId; 
+
+    if (!doctorId) {
+        return <p className="text-center py-10">Doctor ID not found.</p>;
+    }
+
     const doctor = await fetchSingleDoctor(doctorId);
 
     if (!doctor) {
@@ -23,75 +30,107 @@ const DoctorDetailsPage = async ({ params }) => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12">
-            <div className="max-w-4xl mx-auto px-4">
-                
-                <Link href="/all-appointments" className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-[#023154] mb-6 transition-colors">
+        <div className="min-h-screen bg-[#f0fbfc] py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <Link
+                    href="/all-appointments"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-[#023154] mb-8 transition-colors"
+                >
                     <FiChevronLeft className="w-4 h-4" /> Back to All Doctors
                 </Link>
 
-                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
-                    <div className="relative w-full h-64 md:h-full rounded-2xl overflow-hidden bg-slate-100">
-                        <Image 
-                            src={doctor.image} 
-                            alt={doctor.name}
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-10">
+                    <div
+                        className="grid gap-10"
+                        style={{ gridTemplateColumns: "280px 1fr" }}
+                    >
+                        <div
+                            className="rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0"
+                            style={{ width: "280px", height: "340px" }}
+                        >
+                            <img
+                                src={doctor.image}
+                                alt={doctor.name}
+                                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+                            />
+                        </div>
 
-                   
-                    <div className="md:col-span-2 flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-center justify-between gap-2 flex-wrap">
-                                <span className="bg-[#2ED8E3]/10 text-[#023154] text-xs font-bold px-3 py-1 rounded-full">
+                        <div className="flex flex-col min-w-0" style={{ gap: "20px" }}>
+                            <div>
+                                <span className="bg-[#2ED8E3]/15 text-[#023154] text-xs font-bold px-3 py-1 rounded-full">
                                     {doctor.specialty}
                                 </span>
-                                <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
-                                    <FaStar className="w-4 h-4 fill-amber-500" /> {doctor.rating || "4.5"}
+                            </div>
+
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#023154", lineHeight: "1.2", margin: 0 }}>
+                                    {doctor.name}
+                                </h1>
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                    <FaStar style={{ width: "16px", height: "16px", color: "#f59e0b", fill: "#f59e0b", flexShrink: 0 }} />
+                                    <span style={{ fontSize: "14px", fontWeight: "700", color: "#334155" }}>
+                                        {doctor.rating || "4.5"}
+                                        <span style={{ fontWeight: "400", color: "#94a3b8" }}> / 5.0</span>
+                                    </span>
                                 </div>
                             </div>
 
-                            <h1 className="text-2xl font-extrabold text-[#023154] mt-3">{doctor.name}</h1>
-                            <p className="text-slate-600 font-semibold text-sm mt-1">{doctor.hospital}</p>
-                            
-                            <div className="flex items-center gap-1.5 text-slate-400 text-xs mt-2">
-                                <FiMapPin className="w-3.5 h-3.5" /> {doctor.location}
-                            </div>
-
-                            <div className="mt-4 bg-slate-50 p-3 rounded-xl inline-block text-xs font-bold text-slate-700">
-                                Experience: <span className="text-blue-600">{doctor.experience}</span>
-                            </div>
-
-                            <p className="text-slate-500 text-sm mt-5 leading-relaxed">
+                            <p style={{ fontSize: "14px", color: "#475569", lineHeight: "1.75", margin: 0 }}>
                                 {doctor.description}
                             </p>
 
-                       
-                            <div className="mt-6">
-                                <h4 className="text-sm font-bold text-[#023154] flex items-center gap-1.5 mb-2.5">
-                                    <FiClock className="w-4 h-4 text-[#2ED8E3]" /> Available Schedule
-                                </h4>
-                                <div className="flex gap-2 flex-wrap">
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                <InfoBox
+                                    icon={<FiClock style={{ width: "16px", height: "16px", color: "#2ED8E3", flexShrink: 0 }} />}
+                                    label="Experience"
+                                    value={doctor.experience}
+                                />
+                                <InfoBox
+                                    icon={<MdLocalHospital style={{ width: "16px", height: "16px", color: "#2ED8E3", flexShrink: 0 }} />}
+                                    label="Hospital"
+                                    value={doctor.hospital}
+                                />
+                                <InfoBox
+                                    icon={<FiMapPin style={{ width: "16px", height: "16px", color: "#2ED8E3", flexShrink: 0 }} />}
+                                    label="Location"
+                                    value={doctor.location}
+                                />
+                                <InfoBox
+                                    icon={<FiDollarSign style={{ width: "16px", height: "16px", color: "#2ED8E3", flexShrink: 0 }} />}
+                                    label="Consultation Fee"
+                                    value={`৳${doctor.fee}`}
+                                />
+                            </div>
+
+                            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                <p style={{ fontSize: "14px", fontWeight: "700", color: "#023154", margin: 0 }}>
+                                    Availability
+                                </p>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                                     {doctor.availability?.map((slot, idx) => (
-                                        <span key={idx} className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200/50">
+                                        <span
+                                            key={idx}
+                                            style={{
+                                                background: "rgba(46,216,227,0.1)",
+                                                border: "1px solid rgba(46,216,227,0.35)",
+                                                color: "#023154",
+                                                fontSize: "12px",
+                                                fontWeight: "600",
+                                                padding: "6px 14px",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
                                             {slot}
                                         </span>
                                     ))}
                                 </div>
                             </div>
-                        </div>
 
-                      
-                        <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+                            {/* বুকিং বাটনের কাস্টম ইন্টিগ্রেশন */}
                             <div>
-                                <p className="text-slate-400 text-xs">Total Visiting Fee</p>
-                                <p className="text-2xl font-black text-[#023154]">৳ {doctor.fee}</p>
+                                <BookAppointmentButton doctor={doctor} />
                             </div>
-                            <Button className="bg-[#2ED8E3] text-[#023154] font-black px-8 h-12 rounded-xl shadow-lg shadow-[#2ED8E3]/20 hover:opacity-90 transition-all text-sm">
-                                Confirm Booking
-                            </Button>
                         </div>
                     </div>
                 </div>
@@ -99,5 +138,31 @@ const DoctorDetailsPage = async ({ params }) => {
         </div>
     );
 };
+
+function InfoBox({ icon, label, value }) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "12px",
+                border: "1px solid #f1f5f9",
+                borderRadius: "12px",
+                padding: "12px 14px",
+                background: "rgba(248,250,252,0.6)",
+            }}
+        >
+            <div style={{ paddingTop: "2px" }}>{icon}</div>
+            <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: "11px", color: "#94a3b8", fontWeight: "500", margin: "0 0 3px 0" }}>
+                    {label}
+                </p>
+                <p style={{ fontSize: "14px", fontWeight: "700", color: "#023154", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {value}
+                </p>
+            </div>
+        </div>
+    );
+}
 
 export default DoctorDetailsPage;

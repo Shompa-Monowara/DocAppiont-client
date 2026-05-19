@@ -3,7 +3,7 @@
 export const fetchDoctors = async (searchTerm = "") => {
     try {
    
-        const res = await fetch(`http://localhost:8080/all-appointments?search=${searchTerm}`, {
+        const res = await fetch(`http://localhost:5000/all-appointments?search=${searchTerm}`, {
             cache: "no-store" 
         });
 
@@ -21,7 +21,7 @@ export const fetchDoctors = async (searchTerm = "") => {
 
 export const fetchSingleDoctor = async (doctorId) => {
     try {
-        const res = await fetch(`http://localhost:8080/all-appointments/${doctorId}`, {
+        const res = await fetch(`http://localhost:5000/all-appointments/${doctorId}`, {
             cache: "no-store"
         });
 
