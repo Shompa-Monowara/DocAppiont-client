@@ -11,11 +11,9 @@ function SearchBarWrapper() {
 }
 
 const AllAppointmentsPage = async ({ searchParams }) => {
-   
-    const sParams = await searchParams;
-    const query = sParams?.search || "";
-    
-   
+
+    const query = searchParams?.search || "";
+
     const doctors = await fetchDoctors(query);
 
     return (

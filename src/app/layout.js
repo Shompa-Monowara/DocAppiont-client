@@ -4,6 +4,8 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 import { Plus_Jakarta_Sans, Nunito } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Toaster } from "react-hot-toast";
 
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -29,12 +31,20 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      data-theme="light"
       className={`${plusJakartaSans.variable} ${nunito.variable} h-full antialiased`}
     >
      
-      <body >
+      <body className="min-h-full flex flex-col">
         <Navbar/>
-        {children}
+        <main className="flex-1 flex flex-col">
+          {children}
+        </main>
+             <Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
+            <Footer/>
       </body>
     </html>
   );

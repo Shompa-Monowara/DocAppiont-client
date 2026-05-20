@@ -127,7 +127,7 @@ const DoctorDetailsPage = async (props) => {
                                 </div>
                             </div>
 
-                            {/* বুকিং বাটনের কাস্টম ইন্টিগ্রেশন */}
+                           
                             <div>
                                 <BookAppointmentButton doctor={doctor} />
                             </div>

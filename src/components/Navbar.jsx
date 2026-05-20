@@ -4,18 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button, Avatar } from "@heroui/react"; 
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
+import { MdLogin } from "react-icons/md";
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); 
 
-
   const { data: session } = authClient.useSession(); 
   const user = session?.user;
 
-  
   const handleSignOut = async () => {
     await authClient.signOut();
   };
@@ -42,7 +42,7 @@ export default function Navbar() {
               priority         
             />
             <span className="font-heading font-extrabold text-xl text-[#023154] tracking-tight">
-              Doc<span className="text-[#2ED8E3] font-extrabold">Appoint</span>
+              Doc<span className="text-[#023154] font-extrabold">Appoint</span>
             </span>
           </Link>
 
@@ -56,8 +56,8 @@ export default function Navbar() {
                   href={link.href}
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
                     isActive
-                      ? "text-[#023154] bg-[#023154]/5" 
-                      : "text-slate-900 hover:text-[#2ED8E3] hover:bg-slate-50" 
+                      ? "text-[#023154] bg-[#023154]/10"
+                      : "text-slate-600 hover:text-[#023154] hover:bg-[#023154]/5"
                   }`}
                 >
                   {link.name}
@@ -68,35 +68,34 @@ export default function Navbar() {
 
           {/* Desktop Authentication Section */}
           <ul className="hidden md:flex items-center gap-4">
-          
             {user ? (
               <>
                 <li>
                   <Avatar>
-        <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image}  />
-        <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
-      </Avatar>
+                    <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image} />
+                    <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
+                  </Avatar>
                 </li>
                 <li>
                   <Button 
                     onClick={handleSignOut}
-                    className="bg-red-500 text-white font-bold text-sm px-4 rounded-xl h-10 hover:bg-red-600 transition-colors"
+                    className="text-slate-600 font-bold text-sm px-4 rounded-xl h-10 hover:bg-red-50 transition-colors bg-transparent"
                   >
-                    Logout
+                    <MdLogin /> Logout
                   </Button>
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <Link href="/login" className="text-sm font-bold text-slate-900 hover:text-[#2ED8E3] transition-colors px-4 py-2">
+                  <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-[#023154] transition-colors px-4 py-2">
                     Login
                   </Link>
                 </li>
                 <li>
                   <Link href="/register">
                     <Button 
-                      className="bg-[#2ED8E3] text-[#023154] font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#2ED8E3]/20 min-w-max h-10 hover:opacity-90"
+                      className="bg-[#023154] text-white font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#023154]/20 min-w-max h-10 hover:bg-[#034a7a] transition-colors"
                     >
                       Register
                     </Button>
@@ -106,11 +105,10 @@ export default function Navbar() {
             )}
           </ul>
 
-      
           <div className="flex md:hidden items-center">
             <button 
               onClick={() => setIsOpen(true)} 
-              className="text-[#023154] p-2 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center"
+              className="text-[#023154] p-2 rounded-xl hover:bg-[#023154]/5 transition-colors flex items-center justify-center"
             >
               <FiMenu className="w-6 h-6" />
             </button>
@@ -119,7 +117,6 @@ export default function Navbar() {
         </div>
       </div>
 
-    
       <div
         className={`fixed inset-0 bg-slate-900/30 z-50 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -127,7 +124,6 @@ export default function Navbar() {
         onClick={() => setIsOpen(false)}
       />
 
-    
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between ${
           isOpen ? "translate-x-0" : "translate-x-full"
@@ -144,12 +140,12 @@ export default function Navbar() {
               className="object-contain rounded-lg"
             />
             <span className="font-heading font-extrabold text-lg text-[#023154] tracking-tight">
-              Doc<span className="text-[#2ED8E3] font-extrabold">Appoint</span>
+              Doc<span className="text-[#023154] font-extrabold">Appoint</span>
             </span>
           </Link>
           <button 
             onClick={() => setIsOpen(false)} 
-            className="p-2 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-[#023154] transition-colors flex items-center justify-center"
+            className="p-2 rounded-xl hover:bg-[#023154]/5 text-slate-500 hover:text-[#023154] transition-colors flex items-center justify-center"
           >
             <FiX className="w-5 h-5" />
           </button>
@@ -166,8 +162,8 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`block px-4 py-3 rounded-xl text-base font-bold transition-all duration-200 ${
                   isActive
-                    ? "text-[#023154] bg-[#023154]/5 border-l-4 border-[#023154]" 
-                    : "text-slate-900 hover:bg-slate-50 hover:text-[#2ED8E3]" 
+                    ? "text-[#023154] bg-[#023154]/10 border-l-4 border-[#023154]"
+                    : "text-slate-600 hover:bg-[#023154]/5 hover:text-[#023154]"
                 }`}
               >
                 {link.name}
@@ -182,10 +178,10 @@ export default function Navbar() {
             {user ? (
               <>
                 <li className="flex items-center gap-3 w-full px-2 py-1">
-               <Avatar>
-        <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image}  />
-        <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
-      </Avatar>
+                  <Avatar>
+                    <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image} />
+                    <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
+                  </Avatar>
                   <span className="text-sm font-bold text-slate-900 truncate">{user?.name || "User"}</span>
                 </li>
                 <li className="w-full">
@@ -194,9 +190,9 @@ export default function Navbar() {
                       handleSignOut();
                       setIsOpen(false);
                     }}
-                    className="w-full bg-red-500 text-white font-bold text-sm h-11 rounded-xl hover:bg-red-600 transition-all"
+                    className="w-full text-slate-600 font-bold text-sm h-11 rounded-xl hover:bg-red-50 transition-all bg-transparent"
                   >
-                    Logout
+                   <FiLogIn /> Logout
                   </Button>
                 </li>
               </>
@@ -206,7 +202,7 @@ export default function Navbar() {
                   <Link href="/login" onClick={() => setIsOpen(false)} className="w-full">
                     <Button 
                       variant="bordered"
-                      className="w-full text-[#023154] font-bold border-1.5 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-sm h-11 rounded-xl transition-all"
+                      className="w-full text-[#023154] font-bold border-1.5 border-[#023154]/20 bg-white hover:bg-[#023154]/5 hover:border-[#023154]/30 text-sm h-11 rounded-xl transition-all"
                     >
                       Login
                     </Button>
@@ -215,7 +211,7 @@ export default function Navbar() {
                 <li className="w-full">
                   <Link href="/register" onClick={() => setIsOpen(false)} className="w-full">
                     <Button 
-                      className="w-full bg-[#2ED8E3] text-[#023154] font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#2ED8E3]/10 transition-all hover:opacity-90"
+                      className="w-full bg-[#023154] text-white font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#023154]/20 transition-all hover:bg-[#034a7a]"
                     >
                       Register
                     </Button>

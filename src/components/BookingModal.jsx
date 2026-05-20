@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { FiX, FiUser, FiMail, FiPhone, FiCalendar, FiClock, FiFileText } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function BookingModal({ isOpen, onClose, doctor }) {
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const userEmail = session?.user?.email || session?.email || "";
 
@@ -26,7 +28,7 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
     }
     if (!patientName || !gender || !phone || !appointmentDate || !appointmentTime) {
       toast.error("Please fill all the required fields.");
-      return;
+      return; 
     }
 
     const appointmentData = {
@@ -42,12 +44,16 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
 
     try {
       setLoading(true);
+     
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/appointments`, {
+          
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(appointmentData),
       });
+      
       const data = await response.json();
+      
       if (data.success) {
         toast.success("Appointment booked successfully!");
         setPatientName("");
@@ -57,10 +63,12 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
         setAppointmentTime("");
         setReason("");
         onClose();
+        router.push("/dashboard");
       } else {
         toast.error(data.message || "Something went wrong.");
       }
     } catch (error) {
+      console.error("Connection error detail:", error);
       toast.error("Failed to connect with the server.");
     } finally {
       setLoading(false);
@@ -69,118 +77,90 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
 
   if (!isOpen) return null;
 
-  const inputStyle = {
-    width: "100%",
-    border: "1px solid #e2e8f0",
-    borderRadius: "10px",
-    padding: "10px 12px 10px 36px",
-    fontSize: "14px",
-    color: "#023154",
-    outline: "none",
-    background: "white",
-    boxSizing: "border-box",
-  };
-
-  const labelStyle = {
-    fontSize: "13px",
-    fontWeight: "600",
-    color: "#374151",
-    display: "block",
-    marginBottom: "6px",
-  };
-
-  const fieldWrap = { position: "relative" };
-
-  const iconStyle = {
-    position: "absolute",
-    left: "11px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#94a3b8",
-    width: "15px",
-    height: "15px",
-    pointerEvents: "none",
-  };
-
   return (
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-      style={{
-        position: "fixed", inset: 0, zIndex: 50,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        backgroundColor: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", padding: "16px",
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-4"
     >
-      <div style={{
-        background: "white", borderRadius: "16px", width: "100%",
-        maxWidth: "420px", boxShadow: "0 24px 64px rgba(0,0,0,0.18)", overflow: "hidden",
-      }}>
+      <div className="bg-white rounded-2xl w-full max-w-[420px] shadow-2xl overflow-hidden">
         <form onSubmit={handleSubmit}>
 
           {/* Header */}
-          <div style={{ padding: "18px 20px 14px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-start">
             <div>
-              <h2 style={{ fontSize: "18px", fontWeight: "800", color: "#023154", margin: 0 }}>
-                Book Appointment
-              </h2>
-              <p style={{ fontSize: "12px", color: "#94a3b8", margin: "3px 0 0 0" }}>
-                with {doctor?.name}
-              </p>
+              <h2 className="text-lg font-extrabold text-[#023154]">Book Appointment</h2>
+              <p className="text-xs text-slate-400 mt-0.5">with {doctor?.name}</p>
             </div>
-            <button type="button" onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: "2px" }}>
-              <FiX style={{ width: "18px", height: "18px" }} />
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-slate-400 hover:text-[#023154] transition-colors p-0.5"
+            >
+              <FiX className="w-4 h-4" />
             </button>
           </div>
 
           {/* Body */}
-          <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: "14px", maxHeight: "65vh", overflowY: "auto" }}>
+          <div className="px-5 py-4 flex flex-col gap-3.5 max-h-[65vh] overflow-y-auto">
 
             {/* User Email */}
-            <div>
-              <label style={labelStyle}>User Email</label>
-              <div style={fieldWrap}>
-                <FiMail style={iconStyle} />
-                {isPending ? (
-                  <input type="text" value="Loading..." disabled
-                    style={{ ...inputStyle, background: "#f8fafc", color: "#94a3b8" }}
-                  />
-                ) : (
-                  <input type="email" value={userEmail} placeholder="Login to autofill" readOnly
-                    style={{ ...inputStyle, background: "#f8fafc", color: "#64748b" }}
-                  />
-                )}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-[#023154]">User Email</label>
+              <div className="relative">
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                <input
+                  type="email"
+                  value={isPending ? "Loading..." : userEmail}
+                  placeholder="Login to autofill"
+                  readOnly
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3.5 py-2.5 text-sm text-slate-600 outline-none cursor-default"
+                />
               </div>
             </div>
 
             {/* Doctor Name */}
-            <div>
-              <label style={labelStyle}>Doctor Name</label>
-              <div style={fieldWrap}>
-                <FiUser style={iconStyle} />
-                <input type="text" value={doctor?.name || ""} disabled
-                  style={{ ...inputStyle, background: "#f8fafc", color: "#94a3b8" }}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-[#023154]">Doctor Name</label>
+              <div className="relative">
+                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                <input
+                  type="text"
+                  value={doctor?.name || ""}
+                  disabled
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3.5 py-2.5 text-sm text-slate-600 outline-none cursor-not-allowed"
                 />
               </div>
             </div>
 
             {/* Patient Name */}
-            <div>
-              <label style={labelStyle}>Patient Name <span style={{ color: "#ef4444" }}>*</span></label>
-              <div style={fieldWrap}>
-                <FiUser style={iconStyle} />
-                <input required type="text" placeholder="Full name"
-                  value={patientName} onChange={(e) => setPatientName(e.target.value)}
-                  style={inputStyle}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-[#023154]">
+                Patient Name <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                <input
+                  required
+                  type="text"
+                  placeholder="Full name"
+                  value={patientName}
+                  onChange={(e) => setPatientName(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3.5 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all placeholder:text-slate-400"
                 />
               </div>
             </div>
 
             {/* Gender + Phone */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-              <div>
-                <label style={labelStyle}>Gender <span style={{ color: "#ef4444" }}>*</span></label>
-                <select required value={gender} onChange={(e) => setGender(e.target.value)}
-                  style={{ ...inputStyle, padding: "10px 12px", color: gender ? "#023154" : "#94a3b8" }}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-[#023154]">
+                  Gender <span className="text-red-400">*</span>
+                </label>
+                <select
+                  required
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all"
                 >
                   <option value="" disabled>Select</option>
                   <option value="Male">Male</option>
@@ -188,54 +168,58 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              <div>
-                <label style={labelStyle}>Phone <span style={{ color: "#ef4444" }}>*</span></label>
-                <div style={fieldWrap}>
-                  <FiPhone style={iconStyle} />
-                  <input required type="tel" placeholder="01XXXXXXXXX"
-                    value={phone} onChange={(e) => setPhone(e.target.value)}
-                    style={inputStyle}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-[#023154]">
+                  Phone <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                  <input
+                    required
+                    type="tel"
+                    placeholder="01XXXXXXXXX"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all placeholder:text-slate-400"
                   />
                 </div>
               </div>
             </div>
 
             {/* Date + Time */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-
-              {/* ✅ FIXED: Date field */}
-              <div>
-                <label style={labelStyle}>Date <span style={{ color: "#ef4444" }}>*</span></label>
-                <div style={fieldWrap}>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-[#023154]">
+                  Date <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  {/* বামপাশের কাস্টম ক্যালেন্ডার আইকন */}
                   <FiCalendar
-                    style={{ ...iconStyle, pointerEvents: "auto", cursor: "pointer" }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 cursor-pointer z-10"
                     onClick={() => document.getElementById("appt-date").showPicker()}
                   />
+                  {/* ডানদিকের ডিফল্ট ইন্ডিকেটর আইকন পুরোপুরি রিমুভ করার জন্য কাস্টম সিলেক্টর ব্যবহার করা হয়েছে */}
                   <input
                     id="appt-date"
                     required
                     type="date"
                     value={appointmentDate}
                     onChange={(e) => setAppointmentDate(e.target.value)}
-                    style={{
-                      ...inputStyle,
-                      colorScheme: "light",
-                      WebkitAppearance: "none",
-                      MozAppearance: "none",
-                      appearance: "none",
-                    }}
+                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                   />
                 </div>
               </div>
-
-              {/* Time */}
-              <div>
-                <label style={labelStyle}>Time <span style={{ color: "#ef4444" }}>*</span></label>
-                <div style={fieldWrap}>
-                  <FiClock style={iconStyle} />
-                  <select required value={appointmentTime}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-[#023154]">
+                  Time <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                  <select
+                    required
+                    value={appointmentTime}
                     onChange={(e) => setAppointmentTime(e.target.value)}
-                    style={{ ...inputStyle, color: appointmentTime ? "#023154" : "#94a3b8" }}
+                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all"
                   >
                     <option value="" disabled>Select</option>
                     {doctor?.availability?.map((slot) => (
@@ -247,31 +231,31 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
             </div>
 
             {/* Reason */}
-            <div>
-              <label style={labelStyle}>Reason (optional)</label>
-              <div style={fieldWrap}>
-                <FiFileText style={{ ...iconStyle, top: "14px", transform: "none" }} />
-                <textarea placeholder="Brief reason for visit"
-                  value={reason} onChange={(e) => setReason(e.target.value)}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-[#023154]">Reason (optional)</label>
+              <div className="relative">
+                <FiFileText className="absolute left-3 top-3 text-slate-400 w-3.5 h-3.5 pointer-events-none" />
+                <textarea
+                  placeholder="Brief reason for visit"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
                   rows={2}
-                  style={{ ...inputStyle, resize: "none", paddingTop: "10px" }}
+                  className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3.5 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all resize-none placeholder:text-slate-400"
                 />
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div style={{ padding: "14px 20px", borderTop: "1px solid #f1f5f9" }}>
-            <button type="submit" disabled={loading}
-              style={{
-                width: "100%", padding: "13px",
-                background: "#2ED8E3", color: "#023154",
-                fontWeight: "800", fontSize: "15px",
-                border: "none", borderRadius: "12px",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.75 : 1,
-                boxShadow: "0 4px 14px rgba(46,216,227,0.3)",
-              }}
+          <div className="px-5 py-4 border-t border-slate-100">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-xl text-white text-sm font-extrabold tracking-wide transition-all ${
+                loading
+                  ? "bg-slate-400 cursor-not-allowed"
+                  : "bg-[#023154] hover:bg-[#034a7a] active:scale-[0.99] cursor-pointer"
+              }`}
             >
               {loading ? "Booking..." : "Confirm Booking"}
             </button>

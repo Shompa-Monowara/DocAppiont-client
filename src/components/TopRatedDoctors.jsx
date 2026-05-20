@@ -12,7 +12,7 @@ const TopRatedDoctors = async () => {
 
     return (
      
-        <section className="block w-full mt-150 pt-16 pb-16 bg-slate-50 relative z-10 clear-both overflow-hidden">
+        <section className="block w-full mt-6 pt-16 pb-16 bg-slate-50 relative z-10 clear-both overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 
             
