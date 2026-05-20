@@ -2,97 +2,122 @@
 
 import { useState } from "react";
 import { Avatar } from "@heroui/react";
+import { FaPencilAlt } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 
 const UserProfile = ({ user }) => {
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [name, setName] = useState(user?.name || "");
+    const [photoUrl, setPhotoUrl] = useState(user?.image || "");
+
+    const handleSave = () => {
+        // save logic এখানে যোগ করবে
+        setIsModalOpen(false);
+        toast.success("Profile updated successfully!");
+    };
 
     return (
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-5">
-            {/* Left: User Info */}
-            <div className="flex flex-col sm:flex-row items-center gap-5">
-                <Avatar className="w-20 h-20 text-xl font-bold shrink-0">
-                    <Avatar.Image 
-                        referrerPolicy="no-referrer" 
-                        alt={user?.name || "User"} 
-                        src={user?.image} 
-                    />
-                    <Avatar.Fallback>{user?.name?.charAt(0) || "U"}</Avatar.Fallback>
-                </Avatar>
-                
-                <div className="text-center sm:text-left space-y-1">
-                    <h2 className="text-2xl font-bold text-[#023154]">
-                        {user?.name}
-                    </h2>
-                    <p className="text-sm text-slate-500 font-medium">
-                        <strong>Email:</strong> {user?.email}
-                    </p>
-                </div>
-            </div>
+        <>
+            <Toaster position="top-right" />
 
-            {/* Right: Action Buttons */}
-            <div className="flex flex-wrap gap-3 justify-center">
-                <button
-                    onClick={() => setIsProfileModalOpen(true)}
-                    className="px-4 py-2 bg-[#023154] text-white text-sm font-semibold rounded-xl hover:bg-[#034a7a] transition-all shadow-sm cursor-pointer"
-                >
-                    View Full Profile
-                </button>
-                <button
-                    onClick={() => setIsStatusModalOpen(true)}
-                    className="px-4 py-2 bg-[#2ED8E3]/10 text-[#023154] text-sm font-semibold rounded-xl hover:bg-[#2ED8E3]/20 transition-all border border-[#2ED8E3]/20 cursor-pointer"
-                >
-                    Check Overview Status
-                </button>
-            </div>
+            {/* Profile Card */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8 max-w-sm">
 
-            {/* Modal 1: Profile Details */}
-            {isProfileModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fadeIn">
-                    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 relative">
-                        <h3 className="text-xl font-bold text-[#023154] mb-4">Profile Details</h3>
-                        <div className="space-y-3 text-sm text-slate-600">
-                            <p><strong>Full Name:</strong> {user?.name}</p>
-                            <p><strong>Email Address:</strong> {user?.email}</p>
-                            <p className="break-all"><strong>Photo URL:</strong> {user?.image || "Not Provided"}</p>
-                            <p><strong>Account Status:</strong> Verified</p>
-                        </div>
-                        <div className="mt-6 flex justify-end">
-                            <button
-                                onClick={() => setIsProfileModalOpen(false)}
-                                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-xl transition-colors cursor-pointer"
-                            >
-                                Close
-                            </button>
-                        </div>
+                {/* User Info */}
+                <div className="flex items-center gap-4 mb-5">
+                    <Avatar className="w-16 h-16 text-lg font-bold shrink-0">
+                        <Avatar.Image
+                            referrerPolicy="no-referrer"
+                            alt={user?.name || "User"}
+                            src={photoUrl}
+                        />
+                        <Avatar.Fallback>
+                            {user?.name?.charAt(0) || "U"}
+                        </Avatar.Fallback>
+                    </Avatar>
+
+                    <div className="space-y-1">
+                        <h2 className="text-lg font-bold text-[#023154]">
+                            {name || user?.name}
+                        </h2>
+                        <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                            ✉ {user?.email}
+                        </p>
                     </div>
                 </div>
-            )}
 
-            {/* Modal 2: Appointment Status Overview */}
-            {isStatusModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fadeIn">
-                    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 relative">
-                        <h3 className="text-xl font-bold text-[#023154] mb-4">System Overview</h3>
-                        <div className="space-y-3 text-sm text-slate-600">
-                            <p>Hello, <strong>{user?.name}</strong>! Welcome back to your healthcare dashboard.</p>
-                            <p>Here you can monitor your scheduled checkups, connect with doctors, and track your history seamlessly.</p>
-                            <div className="p-3 bg-slate-50 rounded-xl text-xs text-slate-500 border border-slate-100">
-                                Tip: Please arrive 15 minutes prior to your appointment time.
+                {/* Update Button */}
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#023154] hover:bg-[#034a7a] text-white text-sm font-semibold rounded-xl transition-all cursor-pointer"
+                >
+                    <FaPencilAlt className="w-3 h-3" />
+                    Update Profile
+                </button>
+
+            </div>
+
+            {/* Update Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl max-w-md w-full shadow-xl border border-slate-100 overflow-hidden">
+
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                            <h3 className="text-lg font-bold text-[#023154]">
+                                Update Profile
+                            </h3>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer transition-colors leading-none"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-6 py-5 space-y-4">
+
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-semibold text-slate-600">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 outline-none focus:border-[#2ED8E3] transition-colors"
+                                />
                             </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-semibold text-slate-600">
+                                    Photo URL
+                                </label>
+                                <input
+                                    type="text"
+                                    value={photoUrl}
+                                    onChange={(e) => setPhotoUrl(e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 outline-none focus:border-[#023154] transition-colors"
+                                />
+                            </div>
+
                         </div>
-                        <div className="mt-6 flex justify-end">
+
+                        {/* Footer */}
+                        <div className="px-6 py-4 border-t border-slate-100">
                             <button
-                                onClick={() => setIsStatusModalOpen(false)}
-                                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-xl transition-colors cursor-pointer"
+                                onClick={handleSave}
+                                className="w-full px-5 py-2.5 bg-[#023154] hover:bg-[#034a7a] text-white font-semibold text-sm rounded-xl transition-colors cursor-pointer"
                             >
-                                Close
+                                Save
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

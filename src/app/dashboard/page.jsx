@@ -13,18 +13,14 @@ const DashBoardPage = () => {
 
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
-    
-    // অ্যাক্টিভ ট্যাব ট্র্যাক করার জন্য স্টেট (Default: bookings)
     const [activeTab, setActiveTab] = useState("bookings");
 
     useEffect(() => {
         const getAppointments = async () => {
             try {
                 const userEmail = session?.user?.email;
-
                 if (userEmail) {
                     const data = await fetchUserAppointments(userEmail);
-
                     setAppointments(
                         Array.isArray(data)
                             ? data
@@ -43,7 +39,6 @@ const DashBoardPage = () => {
         }
     }, [session, isPending]);
 
-    // Loading State
     if (isPending || loading) {
         return (
             <div className="p-8 text-center text-slate-500">
@@ -52,7 +47,6 @@ const DashBoardPage = () => {
         );
     }
 
-    // No Login
     if (!session) {
         return (
             <div className="p-8 text-center text-red-500">
@@ -63,12 +57,12 @@ const DashBoardPage = () => {
 
     return (
         <div className="p-6 max-w-5xl mx-auto min-h-[60vh]">
-            {/* ড্যাশবোর্ড হেডিং */}
+
             <h1 className="text-3xl font-bold text-[#023154] mb-6 tracking-tight">
                 Dashboard
             </h1>
 
-            {/* স্ক্রিনশটের মতো ট্যাব বাটন সেকশন */}
+            {/* Tab Buttons */}
             <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl w-fit mb-8 border border-slate-100">
                 <button
                     onClick={() => setActiveTab("bookings")}
@@ -92,14 +86,15 @@ const DashBoardPage = () => {
                 </button>
             </div>
 
-            {/* ডাইনামিক কন্টেন্ট এরিয়া (ট্যাব অনুযায়ী পরিবর্তন হবে) */}
-            <div className="animate-fadeIn">
+            {/* Tab Content */}
+            <div>
                 {activeTab === "bookings" ? (
                     <AppointmentList appointments={appointments} />
                 ) : (
                     <UserProfile user={user} />
                 )}
             </div>
+
         </div>
     );
 };
