@@ -113,7 +113,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                             name="patientName"
                             defaultValue={appointment?.patientName || ""}
                             required
-                            className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 text-sm"
+                            className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border[#01223c] text-sm"
                         />
                     </div>
 
@@ -126,7 +126,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                                 name="appointmentDate"
                                 defaultValue={appointment?.appointmentDate || ""}
                                 required
-                                className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                                className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-[#01223c] text-sm cursor-pointer"
                             />
                         </div>
                         
@@ -137,7 +137,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                                 name="appointmentTime"
                                 defaultValue={convertTo24Hour(appointment?.appointmentTime)}
                                 required
-                                className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                                className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-[#01223c] text-sm cursor-pointer"
                             />
                         </div>
                     </div>
@@ -149,7 +149,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                             type="text"
                             name="reason"
                             defaultValue={appointment?.reason || ""}
-                            className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 text-sm"
+                            className="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-[#01223c] text-sm"
                         />
                     </div>
 

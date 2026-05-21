@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { createAuthMiddleware, APIError } from "better-auth/api";
 import { jwt } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
@@ -27,7 +28,5 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [
-    jwt(),
-  ],
+  plugins: [jwt()],
 });

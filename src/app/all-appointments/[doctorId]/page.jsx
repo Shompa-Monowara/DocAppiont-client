@@ -8,6 +8,9 @@ import BookAppointmentButton from "@/components/BookAppointmentButton";
 import { Suspense } from "react";
 import { ClockLoader } from "react-spinners"; 
 
+export const metadata = {
+  title: "DocAppiont - doctor details",
+};
 export const dynamic = "force-dynamic";
 
 

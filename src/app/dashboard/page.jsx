@@ -6,6 +6,9 @@ import AppointmentList from "@/components/AppointmentList";
 import UserProfile from "@/components/UserProfile";
 import { ClockLoader } from "react-spinners"; 
 
+export const metadata = {
+  title: "DocAppoint - dashboard",
+};
 const DashBoardPage = () => {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;

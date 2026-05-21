@@ -2,15 +2,17 @@ import { fetchDoctors } from "@/lib/doctors/data";
 import { Suspense } from "react";
 import DoctorCard from "@/components/DoctorCard";
 import DoctorSearch from "@/components/DoctorSearch";
-import { ClockLoader } from "react-spinners"; // 🌀 স্পিনার ইমপোর্ট করা হলো
+import { ClockLoader } from "react-spinners";
 
+export const metadata = {
+  title: "DocAppoint - all appiontments",
+};
 export const dynamic = "force-dynamic";
 
 function SearchBarWrapper() {
     return <DoctorSearch />;
 }
 
-// ⏱️ পৃথক ক্লায়েন্ট স্পিনারের ঝামেলা এড়াতে ইনলাইন লোডার ডিজাইন
 const ClockLoadingFallback = () => {
     return (
         <div className="col-span-full w-full flex flex-col items-center justify-center py-24 gap-5">
@@ -22,7 +24,7 @@ const ClockLoadingFallback = () => {
     );
 };
 
-// 🩺 ডক্টর লিস্ট রেন্ডার করার জন্য এসিনক্রোনাস সাব-কম্পোনেন্ট
+
 const DoctorList = async ({ query }) => {
     const doctors = await fetchDoctors(query);
 
@@ -50,7 +52,6 @@ const AllAppointmentsPage = async (props) => {
     return (
         <div className="min-h-screen bg-slate-50">
 
-            {/* Header */}
             <div className="bg-white border-b border-slate-100 py-12 text-center">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <h1 className="text-3xl font-extrabold text-[#023154]">
@@ -68,10 +69,10 @@ const AllAppointmentsPage = async (props) => {
                 </div>
             </div>
 
-            {/* Main Content */}
+            
             <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* 🔄 ডেটা ফেচ হওয়ার সময় ClockLoader স্পিনারটি এখানে দেখাবে */}
+                
                     <Suspense fallback={<ClockLoadingFallback />}>
                         <DoctorList query={query} />
                     </Suspense>
