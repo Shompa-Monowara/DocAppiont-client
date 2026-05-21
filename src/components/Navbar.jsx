@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Avatar } from "@heroui/react";
-import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 import { MdLogin } from "react-icons/md";
 
@@ -38,7 +38,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
 
-          {/* Logo */}
+          
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <Image
               src="/logo.png"
@@ -53,7 +53,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Links */}
+       
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -73,16 +73,13 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Desktop Auth */}
+         
           <ul className="hidden md:flex items-center gap-4">
             {isPending ? (
-
               <li>
                 <div className="w-24 h-9 bg-slate-100 animate-pulse rounded-xl" />
               </li>
-
             ) : user ? (
-
               <>
                 <li>
                   <Avatar>
@@ -99,28 +96,25 @@ export default function Navbar() {
                   </Button>
                 </li>
               </>
-
             ) : (
-
-              <>
-                <li>
-                  <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-[#023154] transition-colors px-4 py-2">
-                    Login
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/register">
-                    <Button className="bg-[#023154] text-white font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#023154]/20 min-w-max h-10 hover:bg-[#034a7a] transition-colors">
-                      Register
-                    </Button>
-                  </Link>
-                </li>
-              </>
-
+              <li>
+                <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-[#023154] transition-colors px-4 py-2">
+                  Login
+                </Link>
+              </li>
             )}
+            
+           
+            <li>
+              <Link href="/register">
+                <Button className="bg-[#023154] text-white font-extrabold text-sm px-5 rounded-xl shadow-md shadow-[#023154]/20 min-w-max h-10 hover:bg-[#034a7a] transition-colors">
+                  Register
+                </Button>
+              </Link>
+            </li>
           </ul>
 
-          {/* Mobile Menu Button */}
+        
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setIsOpen(true)}
@@ -133,7 +127,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Overlay */}
+    
       <div
         className={`fixed inset-0 bg-slate-900/30 z-50 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -141,13 +135,13 @@ export default function Navbar() {
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Mobile Drawer */}
+     
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Drawer Header */}
+      
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2.5 shrink-0">
             <Image src="/logo.png" alt="DocAppoint Logo" width={28} height={28} className="object-contain rounded-lg" />
@@ -163,7 +157,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Drawer Nav Links */}
+        
         <div className="p-5 flex-1 space-y-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -184,17 +178,14 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Drawer Auth */}
+        
         <div className="p-5 border-t border-slate-100 bg-white">
           <ul className="flex flex-col gap-3 w-full">
             {isPending ? (
-
               <li>
                 <div className="w-full h-11 bg-slate-100 animate-pulse rounded-xl" />
               </li>
-
             ) : user ? (
-
               <>
                 <li className="flex items-center gap-3 w-full px-2 py-1">
                   <Avatar>
@@ -208,34 +199,31 @@ export default function Navbar() {
                     onClick={() => { handleSignOut(); setIsOpen(false); }}
                     className="w-full text-slate-600 font-bold text-sm h-11 rounded-xl hover:bg-red-50 transition-all bg-transparent"
                   >
-                    <FiLogIn /> Logout
+                    <MdLogin /> Logout
                   </Button>
                 </li>
               </>
-
             ) : (
-
-              <>
-                <li className="w-full">
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
-                    <Button
-                      variant="bordered"
-                      className="w-full text-[#023154] font-bold border-1.5 border-[#023154]/20 bg-white hover:bg-[#023154]/5 text-sm h-11 rounded-xl transition-all"
-                    >
-                      Login
-                    </Button>
-                  </Link>
-                </li>
-                <li className="w-full">
-                  <Link href="/register" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full bg-[#023154] text-white font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#023154]/20 transition-all hover:bg-[#034a7a]">
-                      Register
-                    </Button>
-                  </Link>
-                </li>
-              </>
-
+              <li className="w-full">
+                <Link href="/login" onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant="bordered"
+                    className="w-full text-[#023154] font-bold border-1.5 border-[#023154]/20 bg-white hover:bg-[#023154]/5 text-sm h-11 rounded-xl transition-all"
+                  >
+                    <MdLogin /> Login
+                  </Button>
+                </Link>
+              </li>
             )}
+
+            
+            <li className="w-full">
+              <Link href="/register" onClick={() => setIsOpen(false)}>
+                <Button className="w-full bg-[#023154] text-white font-extrabold text-sm h-11 rounded-xl shadow-md shadow-[#023154]/20 transition-all hover:bg-[#034a7a]">
+                  Register
+                </Button>
+              </Link>
+            </li>
           </ul>
         </div>
 
