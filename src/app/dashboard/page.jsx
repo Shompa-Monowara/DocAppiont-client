@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { fetchUserAppointments } from "@/lib/doctors/data";
-
 import AppointmentList from "@/components/AppointmentList";
 import UserProfile from "@/components/UserProfile";
+import { ClockLoader } from "react-spinners"; 
 
 const DashBoardPage = () => {
     const { data: session, isPending } = authClient.useSession();
@@ -18,9 +17,25 @@ const DashBoardPage = () => {
     useEffect(() => {
         const getAppointments = async () => {
             try {
-                const userEmail = session?.user?.email;
-                if (userEmail) {
-                    const data = await fetchUserAppointments(userEmail);
+                const { data: tokenData } = await authClient.token();
+
+                if (session?.user?.email && tokenData?.token) {
+                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+                    
+                    const response = await fetch(`${apiUrl}/appointments`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${tokenData?.token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch data");
+                    }
+
+                    const data = await response.json();
+                    
                     setAppointments(
                         Array.isArray(data)
                             ? data
@@ -28,7 +43,7 @@ const DashBoardPage = () => {
                     );
                 }
             } catch (error) {
-                console.error("Dashboard Error:", error);
+                console.error("Dashboard Fetch Error:", error);
             } finally {
                 setLoading(false);
             }
@@ -36,33 +51,38 @@ const DashBoardPage = () => {
 
         if (!isPending && session) {
             getAppointments();
+        } else if (!isPending && !session) {
+            setLoading(false);
         }
     }, [session, isPending]);
 
+   
     if (isPending || loading) {
         return (
-            <div className="p-8 text-center text-slate-500">
-                Loading dashboard...
+            <div className="w-full min-h-[60vh] flex flex-col items-center justify-center gap-5">
+            
+                <ClockLoader color="#023154" size={50} speedMultiplier={1} />
+                <p className="text-sm font-medium text-slate-500 tracking-wide animate-pulse">
+                    Loading dashboard...
+                </p>
             </div>
         );
     }
 
     if (!session) {
         return (
-            <div className="p-8 text-center text-red-500">
-                Please login first.
+            <div className="p-8 text-center text-red-500 font-bold">
+                Please login first to view your dashboard.
             </div>
         );
     }
 
     return (
         <div className="p-6 max-w-5xl mx-auto min-h-[60vh]">
-
             <h1 className="text-3xl font-bold text-[#023154] mb-6 tracking-tight">
                 Dashboard
             </h1>
 
-            {/* Tab Buttons */}
             <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl w-fit mb-8 border border-slate-100">
                 <button
                     onClick={() => setActiveTab("bookings")}
@@ -86,7 +106,6 @@ const DashBoardPage = () => {
                 </button>
             </div>
 
-            {/* Tab Content */}
             <div>
                 {activeTab === "bookings" ? (
                     <AppointmentList appointments={appointments} />
@@ -94,7 +113,6 @@ const DashBoardPage = () => {
                     <UserProfile user={user} />
                 )}
             </div>
-
         </div>
     );
 };

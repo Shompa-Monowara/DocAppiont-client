@@ -31,39 +31,60 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
       return; 
     }
 
+    // ব্যাকএন্ড মডেলের সাথে সামঞ্জস্য রেখে অবজেক্ট স্ট্রাকচার তৈরি করা হলো
     const appointmentData = {
-      userEmail,
+      doctorId: doctor?._id,
       doctorName: doctor?.name,
+      doctorImage: doctor?.image,
+      specialty: doctor?.specialty,
+      fee: doctor?.fee,
+      hospital: doctor?.hospital,
       patientName,
       gender,
       phone,
       appointmentDate,
       appointmentTime,
       reason,
+      bookedAt: new Date()
     };
 
     try {
       setLoading(true);
-     
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/appointments`, {
-          
+      
+      // 🔑 মেন্টরের আর্কিটেকচার অনুযায়ী Better-Auth থেকে ডাইনামিক টোকেন জেনারেট
+      const { data: tokenData } = await authClient.token();
+
+      if (!tokenData?.token) {
+        toast.error("Authentication token missing. Please log in again.");
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      
+      const response = await fetch(`${apiUrl}/appointments`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${tokenData.token}` // 🛡️ ভেরিফাইড টোকেন হেডারে পাঠানো হলো
+        },
         body: JSON.stringify(appointmentData),
       });
       
       const data = await response.json();
       
-      if (data.success) {
+      if (response.ok && data.success) {
         toast.success("Appointment booked successfully!");
+        
+        // ফর্ম স্টেট রিসেট করা
         setPatientName("");
         setGender("");
         setPhone("");
         setAppointmentDate("");
         setAppointmentTime("");
         setReason("");
-        onClose();
-        router.push("/dashboard");
+        
+        onClose(); // মডাল বন্ধ করা
+        router.push("/dashboard"); // ড্যাশবোর্ডে রিডাইরেক্ট করা
       } else {
         toast.error(data.message || "Something went wrong.");
       }
@@ -82,7 +103,7 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-4"
     >
-      <div className="bg-white rounded-2xl w-full max-w-[420px] shadow-2xl overflow-hidden">
+      <div className="bg-white rounded-2xl w-full max-w-[420px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <form onSubmit={handleSubmit}>
 
           {/* Header */}
@@ -94,7 +115,7 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
             <button
               type="button"
               onClick={onClose}
-              className="text-slate-400 hover:text-[#023154] transition-colors p-0.5"
+              className="text-slate-400 hover:text-[#023154] transition-colors p-0.5 cursor-pointer"
             >
               <FiX className="w-4 h-4" />
             </button>
@@ -160,7 +181,7 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
                   required
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all cursor-pointer"
                 >
                   <option value="" disabled>Select</option>
                   <option value="Male">Male</option>
@@ -193,12 +214,10 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
                   Date <span className="text-red-400">*</span>
                 </label>
                 <div className="relative">
-                  {/* বামপাশের কাস্টম ক্যালেন্ডার আইকন */}
                   <FiCalendar
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 cursor-pointer z-10"
                     onClick={() => document.getElementById("appt-date").showPicker()}
                   />
-                  {/* ডানদিকের ডিফল্ট ইন্ডিকেটর আইকন পুরোপুরি রিমুভ করার জন্য কাস্টম সিলেক্টর ব্যবহার করা হয়েছে */}
                   <input
                     id="appt-date"
                     required
@@ -219,7 +238,7 @@ export default function BookingModal({ isOpen, onClose, doctor }) {
                     required
                     value={appointmentTime}
                     onChange={(e) => setAppointmentTime(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all"
+                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm text-slate-600 outline-none focus:border-[#023154] focus:ring-2 focus:ring-[#023154]/10 transition-all cursor-pointer"
                   >
                     <option value="" disabled>Select</option>
                     {doctor?.availability?.map((slot) => (

@@ -1,20 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import BookingModal from "./BookingModal";
+import { Button } from "@heroui/react";
+import BookingModal from "./BookingModal"; // বুকিং মডালটি এখানে ইমপোর্ট করা হলো
 
-export default function BookAppointmentButton({ doctor }) {
+const BookAppointmentButton = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full md:w-auto px-6 py-3 bg-[#023154] hover:bg-[#034a7a] text-white text-sm font-bold rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-[#023154]/10 cursor-pointer"
+      <Button 
+        onClick={() => setIsOpen(true)} 
+        className="bg-[#023154] text-white font-bold px-8 py-3 rounded-xl mt-4 cursor-pointer"
       >
         Book Appointment
-      </button>
+      </Button>
 
+      {/* ক্লিক করার পর মডালটি ওপেন করার লজিক */}
       <BookingModal 
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)} 
@@ -22,4 +24,6 @@ export default function BookAppointmentButton({ doctor }) {
       />
     </>
   );
-}
+};
+
+export default BookAppointmentButton;

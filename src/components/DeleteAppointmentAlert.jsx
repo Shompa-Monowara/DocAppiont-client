@@ -4,6 +4,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { AlertDialog, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { authClient } from "@/lib/auth-client"; // 🔑 Better-Auth টোকেন ব্যবহারের জন্য ইমপোর্ট করা হলো
 
 export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
   const router = useRouter();
@@ -11,29 +12,37 @@ export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
 
   const handleDelete = async () => {
     try {
-     
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${_id}`, {
+    
+      const { data: tokenData } = await authClient.token();
+
+      if (!tokenData?.token) {
+        toast.error("You are not authorized. Please login again.");
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      
+      const res = await fetch(`${apiUrl}/booking/${_id}`, {
         method: "DELETE",
         headers: {
           "content-type": "application/json",
+          "Authorization": `Bearer ${tokenData.token}` // 🔒 Bearer Token পাঠানো হলো
         }
       });
 
       const data = await res.json();
 
-    
-      if (data.deletedCount > 0 || data.success) {
+      if (res.ok && (data.deletedCount > 0 || data.success)) {
         toast.success("Appointment deleted successfully!");
         
-       
         if (onDeleteSuccess) {
           onDeleteSuccess(_id);
         }
         
-   
         router.refresh();
       } else {
-        toast.error("Failed to delete from database");
+        toast.error(data.message || "Failed to delete from database");
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -66,10 +75,10 @@ export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
               </p>
             </AlertDialog.Body>
             <AlertDialog.Footer className="flex justify-end gap-3 pt-2">
-              <Button slot="close" variant="tertiary" className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-sm">
+              <Button slot="close" variant="tertiary" className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-sm cursor-pointer">
                 Cancel
               </Button>
-              <Button onClick={handleDelete} slot="close" variant="danger" className="px-4 py-2 bg-[#EF4444] hover:bg-[#DC2626] text-white font-semibold text-sm rounded-xl">
+              <Button onClick={handleDelete} slot="close" variant="danger" className="px-4 py-2 bg-[#EF4444] hover:bg-[#DC2626] text-white font-semibold text-sm rounded-xl cursor-pointer">
                 Yes, Delete
               </Button>
             </AlertDialog.Footer>

@@ -2,13 +2,13 @@
 
 import { useRef } from "react";
 import { FaTimes } from "react-icons/fa";
-import { toast } from "react-hot-toast"; // ১. toast ইমপোর্ট করা হলো
+import { toast } from "react-hot-toast"; 
 
 const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
-    // ফর্মের জন্য রেফারেন্স ডিক্লেয়ার করা
+   
     const formRef = useRef(null);
 
-    // ২৪ ঘণ্টার টাইম ফরম্যাটকে (16:53) ১২ ঘণ্টার ফরম্যাটে (04:53 PM) নেওয়ার ফাংশন
+   
     const convertTo12Hour = (timeString) => {
         if (!timeString) return "";
         if (timeString.includes("AM") || timeString.includes("PM")) return timeString;
@@ -21,7 +21,6 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
         return `${strHour}:${minutes} ${ampm}`;
     };
 
-    // ১২ ঘণ্টার টাইম ফরম্যাটকে (04:53 PM) HTML Input-এর উপযোগী ২৪ ঘণ্টার ফরম্যাটে (16:53) নেওয়ার ফাংশন
     const convertTo24Hour = (time12h) => {
         if (!time12h) return "";
         if (!time12h.includes("AM") && !time12h.includes("PM")) return time12h;
@@ -34,7 +33,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
         return `${hours}:${minutes}`;
     };
 
-    // ২. সাবমিট হ্যান্ডলার
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!formRef.current) return;
@@ -45,7 +44,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
         const formattedTime = convertTo12Hour(rawTime);
         
         try {
-            // পেরেন্ট ফাংশনে ডাটা পাঠানো
+            
             onSave({
                 ...appointment,
                 patientName: formData.get("patientName"),
@@ -54,7 +53,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                 reason: formData.get("reason"),
             });
             
-            // ২. সফলভাবে সেভ হলে টোস্ট মেসেজ দেখাবে
+           
             toast.success("Appointment updated successfully!", {
                 duration: 3000,
                 position: "top-center",
@@ -67,7 +66,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
 
             onClose();
         } catch (error) {
-            // কোনো এরর হলে এরর টোস্ট দেখাবে
+            //
             toast.error("Something went wrong. Please try again.");
             console.error(error);
         }
@@ -79,7 +78,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
             <div className="bg-white p-6 rounded-2xl w-full max-w-lg shadow-xl relative">
                 
-                {/* মোডাল হেডার */}
+             
                 <div className="flex items-center justify-between mb-5">
                     <h2 className="text-xl font-bold text-slate-800">Update Appointment</h2>
                     <button 
@@ -91,7 +90,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                     </button>
                 </div>
 
-                {/* মোডাল ফর্ম */}
+              
                 <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                     
                     {/* Doctor Field */}
@@ -106,7 +105,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                         />
                     </div>
 
-                    {/* Patient Name Field */}
+                   
                     <div className="space-y-1">
                         <label className="text-sm font-semibold text-slate-700">Patient Name</label>
                         <input
@@ -118,7 +117,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                         />
                     </div>
 
-                    {/* Date এবং Time পাশাপাশি (Grid Layout) */}
+                 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700">Date</label>
@@ -143,7 +142,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                         </div>
                     </div>
 
-                    {/* Reason Field */}
+                   
                     <div className="space-y-1">
                         <label className="text-sm font-semibold text-slate-700">Reason</label>
                         <input
@@ -154,7 +153,7 @@ const UpdateModal = ({ isOpen, onClose, appointment, onSave }) => {
                         />
                     </div>
 
-                    {/* সাবমিট বাটন */}
+              
                     <button
                         type="submit"
                         className="w-full bg-[#023154] hover:bg-[#01223c] text-white py-3 rounded-xl font-bold text-sm transition-colors cursor-pointer mt-2"

@@ -78,12 +78,12 @@ const RegisterPage = () => {
 
       <div className="w-full max-w-[420px] bg-white rounded-2xl border border-[#E4E7EC] shadow-md overflow-hidden">
 
-        {/* Top accent bar */}
+        
         <div className="h-1" />
 
         <div className="p-6 md:p-8 flex flex-col items-center">
 
-          {/* Header */}
+         
           <div className="w-full max-w-[320px] flex flex-col items-center mb-6">
             <div className="w-12 h-12 rounded-xl  flex items-center justify-center mb-3 shadow-sm">
               <Image
@@ -98,10 +98,10 @@ const RegisterPage = () => {
             <p className="text-xs font-medium text-slate-500 mt-1">Create your DocAppoint account</p>
           </div>
 
-          {/* Form */}
+          
           <form onSubmit={onSubmit} className="w-full max-w-[320px] flex flex-col gap-4">
 
-            {/* Name */}
+         
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-slate-700 pl-0.5">
                 Name <span className="text-red-400">*</span>
@@ -124,7 +124,7 @@ const RegisterPage = () => {
               )}
             </div>
 
-            {/* Email */}
+           
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-slate-700 pl-0.5">
                 Email <span className="text-red-400">*</span>
@@ -147,7 +147,7 @@ const RegisterPage = () => {
               )}
             </div>
 
-            {/* Photo URL */}
+           
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-slate-700 pl-0.5">
                 Photo URL{" "}
@@ -198,7 +198,7 @@ const RegisterPage = () => {
               )}
             </div>
 
-            {/* Submit */}
+           
             <button
               type="submit"
               disabled={loading}
@@ -219,7 +219,7 @@ const RegisterPage = () => {
             <div className="flex-1 h-px bg-[#E4E7EC]" />
           </div>
 
-          {/* Google */}
+         
           <button
             type="button"
             onClick={handleGoogleSignin}
@@ -229,7 +229,7 @@ const RegisterPage = () => {
             Continue with Google
           </button>
 
-          {/* Login link */}
+         
           <p className="text-center text-sm text-slate-600 mt-5 font-medium">
             Already have an account?{" "}
             <Link href="/login" className="text-[#023154] font-bold hover:underline">

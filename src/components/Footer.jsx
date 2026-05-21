@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image"; 
 
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
  
@@ -117,7 +118,7 @@ const Footer = () => {
                   e.currentTarget.style.borderColor = '';
                 }}
               >
-                <FaTwitter className="w-3.5 h-3.5" />
+                <FaXTwitter className="w-3.5 h-3.5" />
               </a>
 
              
