@@ -54,7 +54,7 @@ const AllAppointmentsPage = async (props) => {
 
             <div className="bg-white border-b border-slate-100 py-12 text-center">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                    <h1 className="text-3xl font-extrabold text-[#023154]">
+                    <h1 className="text-4xl font-extrabold text-[#023154]">
                         Book Your Appointment
                     </h1>
                     <p className="text-slate-500 mt-2">

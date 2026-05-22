@@ -59,7 +59,7 @@ const TopRatedDoctors = () => {
                 
                 {/* Section Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl font-extrabold text-[#023154]">Top Rated Specialists</h2>
+                    <h2 className="text-4xl font-extrabold text-[#023154]">Top Rated Specialists</h2>
                     <p className="text-slate-500 mt-3 text-sm sm:text-base">
                         Consult with our highest-rated premium doctors based on your preference
                     </p>

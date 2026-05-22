@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 import Banner from "@/components/Banner";
-import FaqSection from "@/components/FaqSection";
+import PatientReviews from "@/components/PatientReviews";
 import TopRatedDoctors from "@/components/TopRatedDoctors";
 import WhyChooseUs from "@/components/WhychooseUs";
 
@@ -11,7 +11,7 @@ export default function Home() {
       <Banner/>
       <TopRatedDoctors/>
       <WhyChooseUs/>
-      <FaqSection/>
+      <PatientReviews/>
      
     </div>
   );
