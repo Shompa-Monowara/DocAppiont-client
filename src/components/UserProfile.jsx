@@ -1,177 +1,217 @@
 "use client";
 
 import { useState } from "react";
-import { Avatar } from "@heroui/react";
-import { FaPencilAlt } from "react-icons/fa";
+import { FiX, FiMail, FiMapPin, FiCalendar, FiEdit2, FiCheckCircle, FiUser, FiImage } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
-import { authClient } from "@/lib/auth-client"; // 🔑 Better-Auth টোকেন ব্যবহারের জন্য ইমপোর্ট করা হলো
+import { authClient } from "@/lib/auth-client";
 
 const UserProfile = ({ user }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [name, setName] = useState(user?.name || "");
-    const [photoUrl, setPhotoUrl] = useState(user?.image || "");
-    const [loading, setLoading] = useState(false); // ⏳ সেভ হওয়ার সময় লোডিং ট্র্যাকিং
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState(user?.name || "");
+  const [photoUrl, setPhotoUrl] = useState(user?.image || "");
+  const [loading, setLoading] = useState(false);
 
-    // 🔑 মেন্টরের স্টাইল অনুযায়ী ফাংশনটিকে async করা হলো
-    const handleSave = async () => {
-        if (!name.trim()) {
-            toast.error("Name cannot be empty!");
-            return;
-        }
+  const initials = (user?.name || "U")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
-        try {
-            setLoading(true);
+  const handleSave = async () => {
+    if (!name.trim()) {
+      toast.error("Name cannot be empty!");
+      return;
+    }
+    try {
+      setLoading(true);
+      const { data: tokenData } = await authClient.token();
+      if (!tokenData?.token) {
+        toast.error("You are not authorized. Please login again.");
+        return;
+      }
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL ||
+        "https://doc-appoint-server-kappa.vercel.app";
+      const response = await fetch(`${apiUrl}/user/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenData.token}`,
+        },
+        body: JSON.stringify({ name, image: photoUrl }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success("Profile updated successfully!");
+        setIsModalOpen(false);
+      } else {
+        toast.error(data.message || "Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Profile Update Error:", error);
+      toast.error("Something went wrong while saving!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // ১. Better-Auth থেকে ডাইনামিক সিকিউরড টোকেন নেওয়া হলো
-            const { data: tokenData } = await authClient.token();
+  return (
+    <>
+      <Toaster position="top-right" />
 
-            if (!tokenData?.token) {
-                toast.error("You are not authorized. Please login again.");
-                return;
-            }
+      {/* ── Profile Card ── */}
+      <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden w-full max-w-[480px]">
 
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        {/* Banner */}
+        <div className="relative h-20 bg-[#042C53]">
+          <div
+            className="absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+              backgroundSize: "18px 18px",
+            }}
+          />
+          {/* Avatar */}
+          <div className="absolute -bottom-7 left-6">
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt={name}
+                referrerPolicy="no-referrer"
+                className="w-14 h-14 rounded-full border-[3px] border-white object-cover"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full border-[3px] border-white bg-[#185FA5] flex items-center justify-center text-blue-200 text-xl font-medium">
+                {initials}
+              </div>
+            )}
+          </div>
+        </div>
 
-            // ২. ব্যাকএন্ডে টোকেনসহ প্রোফাইল আপডেটের ডাটা পাঠানো (ধরে নিচ্ছি ব্যাকএন্ডে /user/update রুটটি আছে)
-            const response = await fetch(`${apiUrl}/user/update`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${tokenData.token}` // 🛡️ Bearer Token
-                },
-                body: JSON.stringify({
-                    name,
-                    image: photoUrl
-                })
-            });
+        {/* Body */}
+        <div className="px-6 pt-10 pb-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[17px] font-semibold text-slate-800">{name || user?.name}</p>
+              <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 bg-blue-50 text-blue-800 rounded-full text-[11px] font-medium">
+                <FiCheckCircle className="w-3 h-3" /> Verified account
+              </span>
+            </div>
+          </div>
 
-            const data = await response.json();
+          {/* Meta */}
+          <div className="mt-4 flex flex-col gap-2">
+            <p className="flex items-center gap-2 text-[13px] text-slate-500">
+              <FiMail className="w-3.5 h-3.5 text-slate-400" /> {user?.email}
+            </p>
+            <p className="flex items-center gap-2 text-[13px] text-slate-500">
+              <FiMapPin className="w-3.5 h-3.5 text-slate-400" /> Bangladesh
+            </p>
+            <p className="flex items-center gap-2 text-[13px] text-slate-500">
+              <FiCalendar className="w-3.5 h-3.5 text-slate-400" /> Member since 2024
+            </p>
+          </div>
 
-            if (response.ok && data.success) {
-                toast.success("Profile updated successfully!");
-                setIsModalOpen(false);
-                
-                // অ্যাপের গ্লোবাল অথ স্টেট বা সেশন রিফ্রেশ করার জন্য মেন্টরের প্র্যাকটিস ফলো করতে পারেন:
-                // await authClient.updateUser({ name, image: photoUrl });
-            } else {
-                toast.error(data.message || "Failed to update profile on server.");
-            }
-        } catch (error) {
-            console.error("Profile Update Error:", error);
-            toast.error("Something went wrong while saving!");
-        } finally {
-            setLoading(false);
-        }
-    };
+          <hr className="my-5 border-slate-100" />
 
-    return (
-        <>
-            <Toaster position="top-right" />
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            {[
+              { val: "4", lbl: "Bookings" },
+              { val: "2", lbl: "Upcoming" },
+              { val: "3", lbl: "Doctors" },
+            ].map(({ val, lbl }) => (
+              <div key={lbl} className="bg-slate-50 rounded-lg p-3 text-center">
+                <p className="text-lg font-semibold text-slate-800">{val}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">{lbl}</p>
+              </div>
+            ))}
+          </div>
 
-            {/* Profile Card */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8 max-w-sm">
+          {/* Edit button */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full h-10 rounded-lg bg-[#042C53] hover:bg-[#185FA5] text-blue-100 hover:text-white text-[13px] font-medium flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <FiEdit2 className="w-3.5 h-3.5" /> Edit profile
+          </button>
+        </div>
+      </div>
 
-                {/* User Info */}
-                <div className="flex items-center gap-4 mb-5">
-                    <Avatar className="w-16 h-16 text-lg font-bold shrink-0">
-                        <Avatar.Image
-                            referrerPolicy="no-referrer"
-                            alt={user?.name || "User"}
-                            src={photoUrl}
-                        />
-                        <Avatar.Fallback>
-                            {user?.name?.charAt(0) || "U"}
-                        </Avatar.Fallback>
-                    </Avatar>
+      {/* ── Edit Modal ── */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-[680px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
-                    <div className="space-y-1">
-                        <h2 className="text-lg font-bold text-[#023154]">
-                            {name || user?.name}
-                        </h2>
-                        <p className="text-sm text-slate-500 flex items-center gap-1.5">
-                            ✉ {user?.email}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Update Button */}
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#023154] hover:bg-[#034a7a] text-white text-sm font-semibold rounded-xl transition-all cursor-pointer"
-                >
-                    <FaPencilAlt className="w-3 h-3" />
-                    Update Profile
-                </button>
-
+            {/* Header */}
+            <div className="px-8 py-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-[17px] font-semibold text-slate-800">Edit profile</h3>
+                <p className="text-[12px] text-slate-400 mt-0.5">Update your name and photo</p>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="w-8 h-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all cursor-pointer"
+              >
+                <FiX className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Update Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl max-w-md w-full shadow-xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Body — two columns */}
+            <div className="px-8 py-7 grid grid-cols-2 gap-5">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
+                  <FiUser className="w-3 h-3" /> Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
+                  <FiImage className="w-3 h-3" /> Photo URL
+                </label>
+                <input
+                  type="text"
+                  value={photoUrl}
+                  onChange={(e) => setPhotoUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
+                />
+              </div>
+            </div>
 
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                            <h3 className="text-lg font-bold text-[#023154]">
-                                Update Profile
-                            </h3>
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer transition-colors leading-none"
-                            >
-                                ×
-                            </button>
-                        </div>
+            {/* Footer */}
+            <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 h-10 rounded-lg border border-slate-200 bg-white text-slate-600 text-[13px] font-medium hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={loading}
+                className={`flex-1 h-10 rounded-lg text-[13px] font-medium transition-all ${
+                  loading
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    : "bg-[#042C53] text-blue-100 hover:bg-[#185FA5] hover:text-white cursor-pointer"
+                }`}
+              >
+                {loading ? "Saving…" : "Save changes"}
+              </button>
+            </div>
 
-                        {/* Body */}
-                        <div className="px-6 py-5 space-y-4">
-
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-600">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 outline-none focus:border-[#023154] transition-colors"
-                                />
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-600">
-                                    Photo URL
-                                </label>
-                                <input
-                                    type="text"
-                                    value={photoUrl}
-                                    onChange={(e) => setPhotoUrl(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 outline-none focus:border-[#023154] transition-colors"
-                                />
-                            </div>
-
-                        </div>
-
-                        {/* Footer */}
-                        <div className="px-6 py-4 border-t border-slate-100">
-                            <button
-                                onClick={handleSave}
-                                disabled={loading}
-                                className={`w-full px-5 py-2.5 text-white font-semibold text-sm rounded-xl transition-colors ${
-                                    loading 
-                                        ? "bg-slate-400 cursor-not-allowed" 
-                                        : "bg-[#023154] hover:bg-[#034a7a] cursor-pointer"
-                                }`}
-                            >
-                                {loading ? "Saving..." : "Save"}
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            )}
-        </>
-    );
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default UserProfile;

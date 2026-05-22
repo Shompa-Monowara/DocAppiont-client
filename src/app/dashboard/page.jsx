@@ -6,9 +6,7 @@ import AppointmentList from "@/components/AppointmentList";
 import UserProfile from "@/components/UserProfile";
 import { ClockLoader } from "react-spinners"; 
 
-export const metadata = {
-  title: "DocAppoint - dashboard",
-};
+
 const DashBoardPage = () => {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
@@ -23,7 +21,7 @@ const DashBoardPage = () => {
                 const { data: tokenData } = await authClient.token();
 
                 if (session?.user?.email && tokenData?.token) {
-                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://doc-appoint-server-kappa.vercel.app";
                     
                     const response = await fetch(`${apiUrl}/appointments`, {
                         method: "GET",

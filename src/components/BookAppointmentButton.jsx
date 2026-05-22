@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@heroui/react";
-import BookingModal from "./BookingModal"; // বুকিং মডালটি এখানে ইমপোর্ট করা হলো
+import BookingModal from "./BookingModal"; 
 
 const BookAppointmentButton = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +16,7 @@ const BookAppointmentButton = ({ doctor }) => {
         Book Appointment
       </Button>
 
-      {/* ক্লিক করার পর মডালটি ওপেন করার লজিক */}
+    
       <BookingModal 
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)} 

@@ -158,7 +158,6 @@ const DoctorDetailsPage = async (props) => {
                     <FiChevronLeft className="w-4 h-4" /> Back to All Doctors
                 </Link>
 
-                {/* 🔄 ডাটা ব্যাকএন্ড থেকে আসার সময় ক্লক লোডারটি এখানে ট্রিগার হবে */}
                 <Suspense fallback={<ClockLoadingFallback />}>
                     <DoctorDetailsContent doctorId={doctorId} />
                 </Suspense>

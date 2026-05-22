@@ -1,6 +1,6 @@
 import { authClient } from "@/lib/auth-client";
 
-// ১. সব ডাক্তারদের ডাটা খোঁজা (Public)
+
 export const fetchDoctors = async (search = '') => {
   try {
     const res = await fetch(
@@ -20,7 +20,7 @@ export const fetchDoctors = async (search = '') => {
   }
 };
 
-// ২. নির্দিষ্ট একজন ডাক্তারের ডিটেইলস খোঁজা (Public)
+
 export const fetchSingleDoctor = async (doctorId) => {
   try {
     const res = await fetch(
@@ -40,10 +40,10 @@ export const fetchSingleDoctor = async (doctorId) => {
   }
 };
 
-// ৩. টোকেন দিয়ে ডাইনামিকালি ইউজারের অ্যাপয়েন্টমেন্ট লিস্ট দেখা (Protected)
+
 export const fetchUserAppointments = async () => {
   try {
-    // 🔑 Better-Auth থেকে ডাইনামিক টোকেন জেনারেট করা হলো
+  
     const { data: tokenData } = await authClient.token();
 
     if (!tokenData?.token) {

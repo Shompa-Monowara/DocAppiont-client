@@ -4,7 +4,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { AlertDialog, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { authClient } from "@/lib/auth-client"; // 🔑 Better-Auth টোকেন ব্যবহারের জন্য ইমপোর্ট করা হলো
+import { authClient } from "@/lib/auth-client"; 
 
 export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
   const router = useRouter();
@@ -20,7 +20,7 @@ export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
         return;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://doc-appoint-server-kappa.vercel.app";
 
       
       const res = await fetch(`${apiUrl}/booking/${_id}`, {
@@ -52,8 +52,8 @@ export function DeleteAppointmentAlert({ appointment, onDeleteSuccess }) {
 
   return (
     <AlertDialog>
-    
-      <Button className="flex items-center gap-1 px-4 py-2 bg-[#EF4444] hover:bg-[#DC2626] text-white font-semibold text-sm rounded-xl transition-colors shadow-xs cursor-pointer">
+      
+      <Button className="w-full h-10 flex items-center justify-center gap-2 px-4 bg-[#EF4444] hover:bg-[#DC2626] text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-xs cursor-pointer active:scale-98">
         <FaTrashAlt className="w-3.5 h-3.5" /> Delete
       </Button>
       
