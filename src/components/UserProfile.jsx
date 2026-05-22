@@ -5,12 +5,17 @@ import { FiX, FiMail, FiMapPin, FiCalendar, FiEdit2, FiCheckCircle, FiUser, FiIm
 import toast, { Toaster } from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
+import { useRouter } from "next/navigation";
+
+
 const UserProfile = ({ user }) => {
+  // console.log(user, "user info");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [photoUrl, setPhotoUrl] = useState(user?.image || "");
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const initials = (user?.name || "U")
     .split(" ")
     .map((w) => w[0])
@@ -18,39 +23,36 @@ const UserProfile = ({ user }) => {
     .toUpperCase()
     .slice(0, 2);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    if (loading) return;
+
     if (!name.trim()) {
       toast.error("Name cannot be empty!");
       return;
     }
+
     try {
       setLoading(true);
-      const { data: tokenData } = await authClient.token();
-      if (!tokenData?.token) {
-        toast.error("You are not authorized. Please login again.");
+
+      const { error } = await authClient.updateUser({
+        name,
+        image: photoUrl,
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to update profile");
         return;
       }
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL ||
-        "https://doc-appoint-server-kappa.vercel.app";
-      const response = await fetch(`${apiUrl}/user/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenData.token}`,
-        },
-        body: JSON.stringify({ name, image: photoUrl }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        toast.success("Profile updated successfully!");
-        setIsModalOpen(false);
-      } else {
-        toast.error(data.message || "Failed to update profile.");
-      }
+
+      toast.success("Profile updated successfully!");
+      
+        router.refresh();
+      setIsModalOpen(false);
+
     } catch (error) {
-      console.error("Profile Update Error:", error);
-      toast.error("Something went wrong while saving!");
+      toast.error("Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -58,7 +60,7 @@ const UserProfile = ({ user }) => {
 
   return (
     <>
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
 
       {/* ── Profile Card ── */}
       <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden w-full max-w-[480px]">
@@ -159,53 +161,56 @@ const UserProfile = ({ user }) => {
             </div>
 
             {/* Body — two columns */}
-            <div className="px-8 py-7 grid grid-cols-2 gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
-                  <FiUser className="w-3 h-3" /> Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
-                />
+            <form onSubmit={handleSave}>
+              <div className="px-8 py-7 grid grid-cols-2 gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
+                    <FiUser className="w-3 h-3" /> Name
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your full name"
+                    className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
+                    <FiImage className="w-3 h-3" /> Photo URL
+                  </label>
+                  <input
+                    type="text"
+                    value={photoUrl}
+                    onChange={(e) => setPhotoUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-slate-500 flex items-center gap-1">
-                  <FiImage className="w-3 h-3" /> Photo URL
-                </label>
-                <input
-                  type="text"
-                  value={photoUrl}
-                  onChange={(e) => setPhotoUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="w-full h-10 px-3.5 border border-slate-200 rounded-[10px] text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex gap-3">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 h-10 rounded-lg border border-slate-200 bg-white text-slate-600 text-[13px] font-medium hover:bg-slate-100 transition-all cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className={`flex-1 h-10 rounded-lg text-[13px] font-medium transition-all ${
-                  loading
+              <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 h-10 rounded-lg border border-slate-200 bg-white text-slate-600 text-[13px] font-medium hover:bg-slate-100 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`flex-1 h-10 rounded-lg text-[13px] font-medium transition-all ${loading
                     ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                     : "bg-[#042C53] text-blue-100 hover:bg-[#185FA5] hover:text-white cursor-pointer"
-                }`}
-              >
-                {loading ? "Saving…" : "Save changes"}
-              </button>
-            </div>
+                    }`}
+                >
+                  {loading ? "Saving…" : "Save changes"}
+                </button>
+              </div>
+            </form>
+
+            {/* Footer */}
+
 
           </div>
         </div>
